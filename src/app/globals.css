@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9ff;
+    color: #121c2a;
+    font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+}
+
+/* Custom scrollbar hiding for carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Footer Scrolling Warning Ticker */
+@keyframes ticker-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: ticker-scroll 36s linear infinite;
+  will-change: transform;
+}
+
+.ticker-container:hover .ticker-track,
+.ticker-container:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none !important;
+    white-space: normal !important;
+    transform: none !important;
+  }
+}

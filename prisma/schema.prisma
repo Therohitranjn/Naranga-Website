@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Village {
+  id                 String               @id @default(uuid())
+  name               String
+  slug               String               @unique
+  block              String
+  district           String
+  state              String
+  pinCode            String
+  censusVillageCode  String
+  lgdCode            String
+  descriptionHi      String
+  descriptionEn      String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  statistics         Statistic[]
+  representatives    PanchayatRepresentative[]
+  places             Place[]
+  schools            School[]
+  healthFacilities   HealthFacility[]
+  businesses         LocalBusiness[]
+  notices            Notice[]
+}
+
+model Statistic {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  metric             String
+  value              String
+  unit               String?
+  sourceName         String
+  sourceUrl          String?
+  sourceYear         Int
+  lastVerifiedAt     DateTime  @default(now())
+  verificationStatus String    @default("VERIFIED_HISTORICAL")
+}
+
+model PanchayatRepresentative {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  name               String
+  role               String
+  panchayatName      String
+  wardNumber         Int?
+  photoUrl           String?
+  officialContact    String?
+  sourceUrl          String?
+  tenureStart        String?
+  tenureEnd          String?
+  verificationStatus String    @default("PROVISIONAL_DIRECTORY")
+  isPublished        Boolean   @default(true)
+}
+
+model Place {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  nameHi             String
+  nameEn             String
+  category           String
+  descriptionHi      String
+  descriptionEn      String
+  address            String?
+  latitude           Float?
+  longitude          Float?
+  imageUrl           String?
+  imageCredit        String?
+  sourceUrl          String?
+  verificationStatus String    @default("COMMUNITY_VERIFIED")
+  isPublished        Boolean   @default(true)
+}
+
+model AgricultureRecord {
+  id                 String    @id @default(uuid())
+  recordType         String
+  value              Float
+  unit               String
+  crop               String?
+  sourceName         String
+  sourceUrl          String?
+  sourceYear         Int
+  verificationStatus String    @default("VERIFIED_HISTORICAL")
+}
+
+model School {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  name               String
+  schoolType         String
+  medium             String?
+  classes            String
+  address            String
+  contact            String?
+  mapUrl             String?
+  sourceUrl          String?
+  lastVerifiedAt     DateTime  @default(now())
+  verificationStatus String    @default("DIRECTORY_LISTED")
+}
+
+model HealthFacility {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  name               String
+  facilityType       String
+  address            String
+  contact            String?
+  openingHours       String?
+  mapUrl             String?
+  sourceUrl          String?
+  lastVerifiedAt     DateTime  @default(now())
+  verificationStatus String    @default("VERIFIED")
+}
+
+model LocalBusiness {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  name               String
+  category           String
+  address            String
+  contact            String?
+  openingHours       String?
+  mapUrl             String?
+  ownerConsent       Boolean   @default(true)
+  verificationStatus String    @default("PENDING_VERIFICATION")
+  isPublished        Boolean   @default(false)
+}
+
+model PersonProfile {
+  id                 String    @id @default(uuid())
+  name               String
+  role               String
+  biography          String
+  achievement        String
+  photoUrl           String?
+  consentStatus      Boolean   @default(true)
+  evidenceUrl        String?
+  verificationStatus String    @default("PENDING_VERIFICATION")
+  isPublished        Boolean   @default(false)
+}
+
+model Notice {
+  id                 String    @id @default(uuid())
+  villageId          String
+  village            Village   @relation(fields: [villageId], references: [id])
+  titleHi            String
+  titleEn            String
+  contentHi          String
+  contentEn          String
+  issuingAuthority   String
+  publishedAt        DateTime  @default(now())
+  sourceUrl          String?
+  expiresAt          DateTime?
+  verificationStatus String    @default("VERIFIED")
+  isPublished        Boolean   @default(true)
+}
+
+model Submission {
+  id                 String    @id @default(uuid())
+  submissionType     String
+  content            String
+  submitterName      String
+  contactConsent     Boolean   @default(true)
+  contact            String?
+  attachmentUrl      String?
+  moderationStatus   String    @default("PENDING")
+  submittedAt        DateTime  @default(now())
+}
+
+model User {
+  id                 String    @id @default(uuid())
+  username           String    @unique
+  email              String?   @unique
+  passwordHash       String
+  role               String    @default("ADMIN")
+  createdAt          DateTime  @default(now())
+}
