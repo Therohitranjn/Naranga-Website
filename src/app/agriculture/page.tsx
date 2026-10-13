@@ -9,8 +9,6 @@ import {
   ExternalLink,
   ShieldCheck,
   MapPin,
-  Water,
-  PottedPlant,
   Wheat,
   Calendar,
   CloudSun,
